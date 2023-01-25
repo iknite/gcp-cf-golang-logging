@@ -1,0 +1,96 @@
+---
+repos:
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # Git style
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-vcs-permalinks
+      - id: forbid-new-submodules
+      # - id: no-commit-to-branch
+
+      # Common errors
+      - id: check-docstring-first
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: debug-statements
+      - id: name-tests-test
+      - id: requirements-txt-fixer
+
+      # Cross platform
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+      # - id: go-vet
+      # - id: go-lint
+      - id: go-imports
+      - id: go-cyclo
+        args: [-over=15]
+      - id: validate-toml
+      - id: no-go-testing
+      # - id: golangci-lint
+      # - id: go-critic
+      # - id: go-unit-tests
+      - id: go-build
+      - id: go-mod-tidy
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.29.0   # or higher tag
+    hooks:
+      - id: yamllint
+        args:
+          - --format
+          - parsable
+          - --strict
+          - -d
+          - '{extends: default, rules: {line-length: {max: 120}}}'
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.2   # or specific tag
+    hooks:
+      - id: yamlfmt
+        args: [--mapping, '2', --sequence, '4', --offset, '2']
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.33.0
+    hooks:
+      - id: markdownlint-fix
+        verbose: true
+        entry: bash -c 'markdownlint "$@" || true' --
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shfmt
+        args: [-l, -i, '2', -ci, -sr, -w]
+      - id: shellcheck
+
+  # Dockerfile linter
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.1-beta
+    hooks:
+      - id: hadolint
+        args: [--ignore, DL4006, --ignore, DL3018]
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - --baseline
+          - deployments/secrets/baseline
+          - --exclude-lines
+          - 'secretName: .*'
+          - --exclude-files
+          - .*\.lock$
